@@ -86,7 +86,7 @@ const Features: React.FC = () => {
 
   return (
     <section className={cn(
-      "relative py-20",
+      "relative py-20 overflow-visible",
       isMobile ? "px-4 py-16" : "px-8"
     )}>
       {/* Background Elements */}
@@ -130,7 +130,7 @@ const Features: React.FC = () => {
                 transition: { duration: 0.2 }
               }}
               className={cn(
-                "group relative",
+                "group relative z-10",
                 "bg-white/5 backdrop-blur-md rounded-2xl p-8",
                 "border border-white/10 hover:border-white/20",
                 "transition-all duration-300",

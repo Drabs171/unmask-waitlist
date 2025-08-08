@@ -1,6 +1,7 @@
 import { MailgunProvider } from './providers/mailgun';
 import { SendGridProvider } from './providers/sendgrid';
 import { NodemailerProvider } from './providers/nodemailer';
+import { ResendProvider } from './providers/resend';
 import { generateEmailTemplate } from './templates';
 import { EmailProvider, EmailType, WaitlistEmailData, EmailResponse, EmailTemplate } from './types';
 import { generateSecureToken } from '@/lib/security/encryption';
@@ -15,6 +16,11 @@ export class EmailService {
   }
 
   private initializeProviders() {
+    // Resend provider (preferred simple setup)
+    if (process.env.RESEND_API_KEY) {
+      this.providers.push(new ResendProvider(process.env.RESEND_API_KEY));
+    }
+
     // Mailgun provider
     if (process.env.MAILGUN_API_KEY && process.env.MAILGUN_DOMAIN) {
       this.providers.push(new MailgunProvider(

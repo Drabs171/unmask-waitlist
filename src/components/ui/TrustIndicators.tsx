@@ -209,7 +209,7 @@ const TrustIndicators: React.FC<TrustIndicatorsProps> = ({
             >
               <motion.div
                 className={cn(
-                  'relative overflow-hidden rounded-2xl p-4 md:p-6 cursor-pointer group',
+                  'relative overflow-visible rounded-2xl p-4 md:p-6 cursor-pointer group z-20',
                   'border border-white/10 backdrop-blur-md',
                   `bg-gradient-to-br ${badge.bgGradient}`,
                   'hover:border-white/20 transition-colors duration-300'
@@ -301,7 +301,10 @@ const TrustIndicators: React.FC<TrustIndicatorsProps> = ({
               <AnimatePresence>
                 {showTooltips && isSelected && (
                   <motion.div
-                    className="absolute top-full left-1/2 transform -translate-x-1/2 mt-4 z-50 w-72 md:w-80"
+                    className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-4 z-[60] w-72 md:w-80"
+                    style={{
+                      pointerEvents: 'auto',
+                    }}
                     initial={{ opacity: 0, y: 10, scale: 0.9 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 10, scale: 0.9 }}
@@ -351,7 +354,7 @@ const TrustIndicators: React.FC<TrustIndicatorsProps> = ({
                       </button>
 
                       {/* Arrow */}
-                      <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-8 border-r-8 border-b-8 border-l-transparent border-r-transparent border-b-black/90" />
+                      <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-8 border-r-8 border-t-8 border-l-transparent border-r-transparent border-t-black/90" />
                     </div>
                   </motion.div>
                 )}

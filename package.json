@@ -12,6 +12,7 @@
     "@headlessui/react": "^2.2.7",
     "@sentry/nextjs": "^10.2.0",
     "@neondatabase/serverless": "^0.10.4",
+    "resend": "^3.2.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/nodemailer": "^6.4.17",
     "@upstash/ratelimit": "^2.0.6",
