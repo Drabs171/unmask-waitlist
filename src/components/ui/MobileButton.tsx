@@ -5,7 +5,7 @@ import { motion, useMotionValue, useTransform, useReducedMotion } from 'framer-m
 import { cn } from '@/utils/cn';
 import { Loader2 } from 'lucide-react';
 
-interface MobileButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface MobileButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'size' | 'onAnimationStart' | 'onAnimationEnd' | 'onAnimationIteration'> {
   variant?: 'primary' | 'secondary' | 'ghost' | 'outline' | 'gradient';
   size?: 'sm' | 'md' | 'lg' | 'xl';
   loading?: boolean;
