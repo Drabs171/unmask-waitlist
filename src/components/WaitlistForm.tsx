@@ -395,7 +395,7 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({
             smartKeyboard={true}
             hapticFeedback={true}
             clearable={true}
-            error={validationError}
+            error={validationError ?? undefined}
             success={validationState === 'valid'}
             className="w-full"
           />
