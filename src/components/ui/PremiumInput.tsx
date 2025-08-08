@@ -181,12 +181,12 @@ const PremiumInput = forwardRef<HTMLInputElement, PremiumInputProps>(
       },
     };
 
-    const validationIconVariants = {
+    const validationIconVariants: any = {
       hidden: { scale: 0, opacity: 0 },
       visible: { 
         scale: 1, 
         opacity: 1,
-        transition: { type: 'spring', stiffness: 200 }
+        transition: { type: 'spring' as any, stiffness: 200 }
       },
     };
 
