@@ -49,7 +49,7 @@ export const useParallax = ({
   const [windowHeight, setWindowHeight] = useState(0);
   const [elementBounds, setElementBounds] = useState<DOMRect | null>(null);
   const shouldReduceMotion = useReducedMotion();
-  const rafRef = useRef<number>();
+  const rafRef = useRef<number | null>(null);
 
   const handleScroll = useCallback(() => {
     if (disabled || shouldReduceMotion) return;
@@ -151,7 +151,7 @@ export const useMultiLayerParallax = ({
   const [windowHeight, setWindowHeight] = useState(0);
   const [scrollDirection, setScrollDirection] = useState<'up' | 'down' | null>(null);
   const shouldReduceMotion = useReducedMotion();
-  const rafRef = useRef<number>();
+  const rafRef = useRef<number | null>(null);
   const lastScrollYRef = useRef<number>(0);
   const throttleTimeoutRef = useRef<NodeJS.Timeout>();
 
