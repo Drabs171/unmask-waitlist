@@ -432,7 +432,7 @@ export const useABTest = (testName: string) => {
 // Initialize common tests
 export const initializeWaitlistTests = () => {
   Object.values(WAITLIST_AB_TESTS).forEach(testConfig => {
-    abTestManager.initializeTest(testConfig);
+    abTestManager.initializeTest(testConfig as unknown as ABTestConfig);
   });
 };
 
