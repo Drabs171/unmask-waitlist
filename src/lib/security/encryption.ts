@@ -6,10 +6,6 @@ const CryptoJS: any = require('crypto-js');
 const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY;
 const ALGORITHM = 'aes-256-gcm';
 
-if (!ENCRYPTION_KEY && process.env.NODE_ENV === 'production') {
-  throw new Error('ENCRYPTION_KEY environment variable is required in production');
-}
-
 // Fallback key for development (never use in production)
 const DEV_KEY = 'dev-key-32-chars-for-testing-only';
 
