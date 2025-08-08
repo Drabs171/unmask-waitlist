@@ -13,7 +13,7 @@ export class NodemailerProvider implements EmailProvider {
       pass: string;
     };
   }) {
-    this.transporter = nodemailer.createTransporter(config);
+    this.transporter = nodemailer.createTransport(config as any);
   }
 
   async sendEmail(template: EmailTemplate): Promise<EmailResponse> {
