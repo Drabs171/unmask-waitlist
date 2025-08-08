@@ -273,7 +273,7 @@ export const useMousePosition = ({
 }: UseMousePositionOptions = {}) => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
-  const rafRef = useRef<number>();
+  const rafRef = useRef<number | null>(null);
 
   const handleMouseMove = useCallback((event: MouseEvent | TouchEvent) => {
     if (rafRef.current) {
