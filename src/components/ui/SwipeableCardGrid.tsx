@@ -227,7 +227,7 @@ const SwipeableCardGrid: React.FC<SwipeableCardGridProps> = ({
       onHoverStart={() => trackCardHoverStart(card.title, index)}
       onHoverEnd={() => trackCardHoverEnd(card.title, index)}
       onViewportEnter={() => trackCardView(card.title, index)}
-      {...(supportsTouch ? handlers : {})}
+      {...(supportsTouch ? (handlers as any) : {})}
     >
       {/* Card Badge */}
       {card.badge && (
