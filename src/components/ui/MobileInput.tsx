@@ -256,7 +256,7 @@ const MobileInput: React.FC<MobileInputProps> = ({
         {/* Leading Icon */}
         {Icon && (
           <div className={cn(
-            'absolute left-0 top-0 flex items-center justify-center pointer-events-none text-text-secondary',
+            'absolute left-0 top-0 flex items-center justify-center pointer-events-none text-text-secondary z-10',
             size === 'lg' ? 'w-14 h-14' : size === 'md' ? 'w-12 h-12' : 'w-10 h-10'
           )}>
             <Icon className={size === 'lg' ? 'w-6 h-6' : size === 'md' ? 'w-5 h-5' : 'w-4 h-4'} />
@@ -272,10 +272,10 @@ const MobileInput: React.FC<MobileInputProps> = ({
           onFocus={handleFocus}
           onBlur={handleBlur}
           className={inputClasses}
-          placeholder={variant === 'floating' ? '' : (props.placeholder as string)}
           maxLength={maxLength}
           {...getSmartKeyboardProps()}
           {...props}
+          placeholder={variant === 'floating' ? '' : (props.placeholder as string)}
         />
 
         {/* Trailing Actions */}
