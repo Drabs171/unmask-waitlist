@@ -536,6 +536,27 @@ export const EMAIL_TEMPLATES: Record<EmailType, {
       The Unmask Team
     `,
   },
+  [EmailType.REMINDER]: {
+    subject: '⏰ Quick reminder from Unmask',
+    tags: ['reminder'],
+    getHtml: (data: WaitlistEmailData, baseUrl: string) => `
+      <!DOCTYPE html>
+      <html lang="en"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>Reminder</title></head>
+      <body style="background:#0a0a0a;color:#fff;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;">
+        <div style="max-width:580px;margin:0 auto;padding:24px">
+          <h1 style="margin:0 0 12px">Still with us?</h1>
+          <p style="color:#ccc;line-height:1.6">We’re saving your spot on the Unmask waitlist. Verify or manage your subscription anytime.</p>
+          ${data.verificationToken ? `<p><a href="${baseUrl}/api/waitlist/verify?token=${data.verificationToken}" style="display:inline-block;padding:12px 20px;border-radius:9999px;background:linear-gradient(135deg,#ff6b9d,#4ecdc4);color:#fff;text-decoration:none">Verify email</a></p>` : ''}
+          ${data.unsubscribeToken ? `<p style="margin-top:16px"><a href="${baseUrl}/api/waitlist/unsubscribe?token=${data.unsubscribeToken}" style="color:#ff6b9d">Unsubscribe</a></p>` : ''}
+        </div>
+      </body></html>
+    `,
+    getText: (data: WaitlistEmailData, baseUrl: string) => `
+      Reminder from Unmask\n\n` +
+      (data.verificationToken ? `Verify: ${baseUrl}/api/waitlist/verify?token=${data.verificationToken}\n` : '') +
+      (data.unsubscribeToken ? `Unsubscribe: ${baseUrl}/api/waitlist/unsubscribe?token=${data.unsubscribeToken}\n` : '')
+    ,
+  },
 };
 
 export function generateEmailTemplate(
