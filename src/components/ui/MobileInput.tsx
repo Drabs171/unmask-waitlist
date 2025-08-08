@@ -272,6 +272,7 @@ const MobileInput: React.FC<MobileInputProps> = ({
           onFocus={handleFocus}
           onBlur={handleBlur}
           className={inputClasses}
+          placeholder={variant === 'floating' ? '' : (props.placeholder as string)}
           maxLength={maxLength}
           {...getSmartKeyboardProps()}
           {...props}
