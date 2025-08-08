@@ -153,7 +153,7 @@ export const useMultiLayerParallax = ({
   const shouldReduceMotion = useReducedMotion();
   const rafRef = useRef<number | null>(null);
   const lastScrollYRef = useRef<number>(0);
-  const throttleTimeoutRef = useRef<NodeJS.Timeout>();
+  const throttleTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleScroll = useCallback(() => {
     if (disabled || shouldReduceMotion) return;
@@ -175,7 +175,7 @@ export const useMultiLayerParallax = ({
         setScrollDirection(direction);
         lastScrollYRef.current = currentScrollY;
       });
-    }, throttle);
+    }, throttle) as unknown as NodeJS.Timeout;
   }, [disabled, shouldReduceMotion, throttle]);
 
   const handleResize = useCallback(() => {
