@@ -104,13 +104,13 @@ const FloatingTestimonial: React.FC<FloatingTestimonialProps> = ({
     },
   };
 
-  const floatingVariants = {
+  const floatingVariants: any = {
     float: {
       y: [-8, 8, -8],
       transition: {
         duration: 6,
         repeat: Infinity,
-        ease: 'easeInOut',
+        ease: 'easeInOut' as any,
       },
     },
   };
