@@ -138,37 +138,37 @@ const PremiumInput = forwardRef<HTMLInputElement, PremiumInputProps>(
     const actualType = type === 'password' ? (showPassword ? 'text' : 'password') : type;
 
     // Animation variants
-    const containerVariants = {
+    const containerVariants: any = {
       idle: {
         scale: 1,
-        transition: { duration: 0.2, ease: 'easeOut' },
+        transition: { duration: 0.2, ease: 'easeOut' as any },
       },
       focused: {
         scale: !shouldReduceMotion ? 1.01 : 1,
-        transition: { duration: 0.2, ease: 'easeOut' },
+        transition: { duration: 0.2, ease: 'easeOut' as any },
       },
       error: {
         x: shouldReduceMotion ? 0 : [-4, 4, -4, 4, 0],
-        transition: { duration: 0.4, ease: 'easeInOut' },
+        transition: { duration: 0.4, ease: 'easeInOut' as any },
       },
     };
 
-    const labelVariants = {
+    const labelVariants: any = {
       default: {
         scale: 1,
         y: 0,
         color: '#9CA3AF',
-        transition: { duration: 0.2, ease: 'easeOut' },
+        transition: { duration: 0.2, ease: 'easeOut' as any },
       },
       floating: {
         scale: 0.85,
         y: -24,
         color: isFocused ? '#FF6B9D' : '#9CA3AF',
-        transition: { duration: 0.2, ease: 'easeOut' },
+        transition: { duration: 0.2, ease: 'easeOut' as any },
       },
     };
 
-    const borderVariants = {
+    const borderVariants: any = {
       idle: {
         pathLength: 0,
         opacity: 0,
@@ -177,7 +177,7 @@ const PremiumInput = forwardRef<HTMLInputElement, PremiumInputProps>(
       focused: {
         pathLength: 1,
         opacity: 1,
-        transition: { duration: 0.6, ease: 'easeInOut' },
+        transition: { duration: 0.6, ease: 'easeInOut' as any },
       },
     };
 
