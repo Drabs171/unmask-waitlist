@@ -1,103 +1,183 @@
-import Image from "next/image";
+'use client';
+
+import React, { useState } from 'react';
+import { Hero, Features, SocialProof } from '@/components/sections';
+import WaitlistForm from '@/components/WaitlistForm';
+import MobileNavigation from '@/components/navigation/MobileNavigation';
+import PullToRefresh from '@/components/ui/PullToRefresh';
+import ShareButton from '@/components/ui/ShareButton';
+import { SiteIdentity } from '@/components/ui/SiteIdentity';
+import { motion } from 'framer-motion';
+import { useMobileDetection } from '@/hooks/useMobileDetection';
+import { useButtonTracking } from '@/hooks/useAnalytics';
+import { cn } from '@/utils/cn';
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [, setShowWaitlistForm] = useState(false);
+  const { isMobile, isTablet, safeAreaInsets } = useMobileDetection();
+  const { trackCTAClick } = useButtonTracking();
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const handleJoinWaitlist = () => {
+    // Track CTA click
+    trackCTAClick('join_waitlist', 'hero');
+    
+    setShowWaitlistForm(true);
+    
+    // Smooth scroll to waitlist form
+    setTimeout(() => {
+      const formElement = document.getElementById('waitlist-form');
+      if (formElement) {
+        formElement.scrollIntoView({ 
+          behavior: 'smooth',
+          block: isMobile ? 'start' : 'center'
+        });
+      }
+    }, 100);
+  };
+
+  // Handle pull-to-refresh
+  const handleRefresh = async () => {
+    // Simulate data refresh
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    // Optional: Trigger any data refresh logic here
+    console.log('Page refreshed');
+  };
+
+  const mainContent = (
+    <main 
+      className="min-h-screen overflow-x-hidden" 
+      style={{ 
+        background: '#0a0a0a',
+        paddingBottom: isMobile ? Math.max(safeAreaInsets.bottom, 16) : 0
+      }}
+    >
+      {/* Mobile Navigation */}
+      {isMobile && (
+        <MobileNavigation onJoinWaitlist={handleJoinWaitlist} />
+      )}
+
+      {/* Hero Section */}
+      <Hero onJoinWaitlist={handleJoinWaitlist} />
+
+      {/* Features Section */}
+      <Features />
+
+      {/* Community Updates Section - Hidden until we have real data */}
+      {/* <CommunityUpdates /> */}
+
+      {/* Waitlist Form Section */}
+      <motion.section
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className={cn(
+          "px-4 relative bg-white/[0.02] border-y border-white/10",
+          isMobile ? "py-mobile-lg" : "py-20"
+        )}
+        id="waitlist-form"
+      >
+        <div className={cn(
+          "mx-auto",
+          isMobile ? "max-w-sm" : "max-w-4xl"
+        )}>
+          <WaitlistForm />
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+      </motion.section>
+
+      {/* Social Proof Section */}
+      <SocialProof />
+
+      {/* Mobile-Optimized Footer */}
+      <footer className={cn(
+        "border-t border-white/10 px-4",
+        isMobile ? "py-mobile-lg" : "py-12"
+      )}>
+        <div className={cn(
+          "mx-auto text-center",
+          isMobile ? "max-w-sm" : "max-w-6xl"
+        )}>
+          <div className={cn(
+            isMobile ? "mb-mobile-md" : "mb-6"
+          )}>
+            <div className="flex items-center justify-center gap-3 mb-2">
+              <SiteIdentity size={isMobile ? 32 : 40} />
+              <h3 className={cn(
+                "font-bold gradient-text",
+                isMobile ? "text-mobile-title" : "text-2xl"
+              )}>
+                Unmask.life
+              </h3>
+            </div>
+            <p className={cn(
+              "text-text-secondary",
+              isMobile ? "text-mobile-caption" : "text-sm"
+            )}>
+              Dating reimagined for the authentic generation
+            </p>
+          </div>
+
+          {/* Footer Features */}
+          <div className={cn(
+            "flex items-center justify-center text-text-secondary mb-6",
+            isMobile 
+              ? "flex-col gap-3 text-mobile-caption" 
+              : "gap-8 text-sm"
+          )}>
+            <span className="flex items-center gap-1">
+              <span>🔒</span> Privacy First
+            </span>
+            <span className="flex items-center gap-1">
+              <span>💝</span> Authentic Connections
+            </span>
+            <span className="flex items-center gap-1">
+              <span>🚀</span> Coming Soon
+            </span>
+          </div>
+
+          {/* Social Share for Mobile */}
+          {isMobile && (
+            <div className="mb-6">
+              <ShareButton 
+                variant="secondary"
+                size="md"
+                showLabel={true}
+                className="mx-auto"
+              />
+            </div>
+          )}
+
+          <div className={cn(
+            "text-text-secondary",
+            isMobile ? "text-xs leading-relaxed" : "text-xs"
+          )}>
+            © 2024 Unmask.life. All rights reserved.
+            {isMobile && <br />}
+            {!isMobile && ' '}Built for GenZ, by GenZ.
+          </div>
+        </div>
       </footer>
-    </div>
+    </main>
   );
+
+  // Wrap content with analytics
+  const analyticsWrappedContent = mainContent;
+
+  // Wrap with pull-to-refresh for mobile
+  if (isMobile || isTablet) {
+    return (
+      <PullToRefresh
+        onRefresh={handleRefresh}
+        hapticFeedback={true}
+        showSparkles={true}
+        refreshText="Getting latest updates..."
+        pullText="Pull to refresh"
+        releaseText="Release to update"
+      >
+        {mainContent}
+      </PullToRefresh>
+    );
+  }
+
+  return analyticsWrappedContent;
 }

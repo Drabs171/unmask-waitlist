@@ -1,0 +1,33 @@
+
+> unmask-waitlist@0.1.0 dev
+> next dev
+
+   ▲ Next.js 15.4.6
+   - Local:        http://localhost:3000
+   - Network:      http://10.0.0.192:3000
+
+ ✓ Starting...
+ ✓ Ready in 1018ms
+ ○ Compiling / ...
+ ✓ Compiled / in 1092ms (1589 modules)
+You're attempting to animate multiple children within AnimatePresence, but its mode is set to "wait". This will lead to odd visual behaviour.
+ ⚠ Unsupported metadata colorScheme is configured in metadata export in /. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+ GET / 200 in 1479ms
+You're attempting to animate multiple children within AnimatePresence, but its mode is set to "wait". This will lead to odd visual behaviour.
+ ⚠ Unsupported metadata colorScheme is configured in metadata export in /. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+ GET / 200 in 129ms
+ ○ Compiling /offline ...
+ ✓ Compiled /offline in 583ms (1622 modules)
+ ⚠ Unsupported metadata colorScheme is configured in metadata export in /_not-found. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+ GET /icons/icon.svg 404 in 715ms
+ GET /favicon.ico 200 in 740ms
+You're attempting to animate multiple children within AnimatePresence, but its mode is set to "wait". This will lead to odd visual behaviour.
+ ⚠ Unsupported metadata colorScheme is configured in metadata export in /. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+ ⚠ Unsupported metadata colorScheme is configured in metadata export in /offline. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+ GET / 200 in 944ms
+ GET /offline 200 in 945ms
