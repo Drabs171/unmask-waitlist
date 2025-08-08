@@ -22,7 +22,7 @@ export const useFeatureAnimations = (cardId: string, entranceDelay: number = 0) 
   const cardRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(cardRef, { once: true, margin: '-50px' });
   const shouldReduceMotion = useReducedMotion();
-  const flipTimeoutRef = useRef<NodeJS.Timeout>();
+  const flipTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Handle entrance animation when card comes into view
   useEffect(() => {
