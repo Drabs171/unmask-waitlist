@@ -127,7 +127,7 @@ const TrustIndicators: React.FC<TrustIndicatorsProps> = ({
     },
   };
 
-  const badgeVariants = {
+  const badgeVariants: any = {
     hidden: { opacity: 0, y: 20, scale: 0.9 },
     visible: {
       opacity: 1,
@@ -135,18 +135,18 @@ const TrustIndicators: React.FC<TrustIndicatorsProps> = ({
       scale: 1,
       transition: {
         duration: shouldReduceMotion ? 0.1 : 0.5,
-        ease: 'easeOut',
+        ease: 'easeOut' as any,
       },
     },
   };
 
-  const hoverVariants = {
+  const hoverVariants: any = {
     hover: {
       scale: shouldReduceMotion ? 1 : 1.05,
       y: shouldReduceMotion ? 0 : -4,
       transition: {
         duration: 0.3,
-        ease: 'easeOut',
+        ease: 'easeOut' as any,
       },
     },
   };
@@ -166,14 +166,14 @@ const TrustIndicators: React.FC<TrustIndicatorsProps> = ({
     },
   };
 
-  const checkmarkVariants = {
+  const checkmarkVariants: any = {
     hidden: { pathLength: 0, opacity: 0 },
     visible: {
       pathLength: 1,
       opacity: 1,
       transition: {
         duration: 0.5,
-        ease: 'easeOut',
+        ease: 'easeOut' as any,
       },
     },
   };
