@@ -1,6 +1,11 @@
 import { WaitlistEmailData, EmailType } from './types';
 
-export const EMAIL_TEMPLATES = {
+export const EMAIL_TEMPLATES: Record<EmailType, {
+  subject: string;
+  tags: string[];
+  getHtml: (data: WaitlistEmailData, baseUrl: string) => string;
+  getText: (data: WaitlistEmailData, baseUrl: string) => string;
+}> = {
   [EmailType.VERIFICATION]: {
     subject: '🎭 Verify Your Email - Welcome to the Unmask Revolution!',
     tags: ['verification', 'waitlist'],
