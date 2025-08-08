@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
 
     // Top sources
     const sourceCounts: Record<string, number> = {};
-    emailStats.forEach(email => {
+    emailStats.forEach((email: { source: string | null }) => {
       const source = email.source || 'direct';
       sourceCounts[source] = (sourceCounts[source] || 0) + 1;
     });
