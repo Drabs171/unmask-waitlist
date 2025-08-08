@@ -42,8 +42,8 @@ export const usePageTracking = () => {
         trackPerformance.pageLoad(navigationEntry.loadEventEnd - navigationEntry.loadEventStart);
       }
 
-      // Track Core Web Vitals
-      if ('web-vitals' in window || window.webVitals) {
+      // Track Core Web Vitals (guarded; webVitals may not exist)
+      if (('web-vitals' in window) || (window as any).webVitals) {
         // This would be implemented with the web-vitals library
         // For now, we'll use basic performance API
         setTimeout(() => {
