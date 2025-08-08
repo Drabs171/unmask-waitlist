@@ -1,5 +1,7 @@
 import crypto from 'crypto';
-import CryptoJS from 'crypto-js';
+// crypto-js has no bundled types in some environments; import as any
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const CryptoJS: any = require('crypto-js');
 
 const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY;
 const ALGORITHM = 'aes-256-gcm';
