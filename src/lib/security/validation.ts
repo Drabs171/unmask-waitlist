@@ -20,7 +20,7 @@ export const waitlistSubmissionSchema = z.object({
   utm_term: z.string().max(100).optional(),
   utm_content: z.string().max(100).optional(),
   ab_test_variant: z.string().max(50).optional(),
-  metadata: z.record(z.unknown()).optional(),
+  metadata: z.record(z.string(), z.unknown()).optional().or(z.record(z.unknown()).optional()),
 });
 
 // Email verification schema
