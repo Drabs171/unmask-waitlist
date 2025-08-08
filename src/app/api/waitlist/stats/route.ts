@@ -24,13 +24,13 @@ export async function GET(request: NextRequest) {
 
     // Calculate metrics
     const totalSignups = emailStats.length;
-    const verifiedSignups = emailStats.filter(email => email.verified).length;
+    const verifiedSignups = emailStats.filter((email: { verified: boolean }) => email.verified).length;
     const conversionRate = totalSignups > 0 ? (verifiedSignups / totalSignups) * 100 : 0;
 
     // Recent signups (last 24 hours)
     const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000);
     const recentSignups = emailStats.filter(
-      email => new Date(email.created_at) > yesterday
+      (email: { created_at: string }) => new Date(email.created_at) > yesterday
     ).length;
 
     // Top sources
@@ -52,12 +52,12 @@ export async function GET(request: NextRequest) {
       const dayStart = new Date(date.getFullYear(), date.getMonth(), date.getDate());
       const dayEnd = new Date(dayStart.getTime() + 24 * 60 * 60 * 1000);
 
-      const daySignups = emailStats.filter(email => {
+      const daySignups = emailStats.filter((email: { created_at: string }) => {
         const emailDate = new Date(email.created_at);
         return emailDate >= dayStart && emailDate < dayEnd;
       });
 
-      const dayVerified = daySignups.filter(email => email.verified);
+      const dayVerified = daySignups.filter((email: { verified: boolean }) => email.verified);
 
       dailyStats.push({
         date: dayStart.toISOString().split('T')[0],
