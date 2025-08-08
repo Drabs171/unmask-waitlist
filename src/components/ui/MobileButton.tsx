@@ -214,7 +214,7 @@ const MobileButton: React.FC<MobileButtonProps> = ({
       onTouchEnd={handleTouchEnd}
       onClick={handleClick}
       disabled={disabled || loading}
-      {...props}
+      {...(props as any)}
     >
       {/* Content */}
       <span className={cn(
