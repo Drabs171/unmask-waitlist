@@ -42,7 +42,7 @@ const useAdvancedIntersectionObserver = (
 
   const elementRef = useRef<HTMLElement>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
-  const timeoutRef = useRef<NodeJS.Timeout>();
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const previousRatioRef = useRef<number>(0);
   const hasBeenVisibleRef = useRef<boolean>(false);
 
@@ -145,7 +145,7 @@ const useAdvancedIntersectionObserver = (
     };
 
     if (debounceDelay > 0) {
-      timeoutRef.current = setTimeout(updateFn, debounceDelay);
+      timeoutRef.current = setTimeout(updateFn, debounceDelay) as unknown as NodeJS.Timeout;
     } else {
       updateFn();
     }
