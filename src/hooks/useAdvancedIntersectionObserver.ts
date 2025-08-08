@@ -21,7 +21,7 @@ interface AdvancedIntersectionResult {
 }
 
 interface UseAdvancedIntersectionObserverReturn extends AdvancedIntersectionResult {
-  ref: React.RefObject<HTMLElement>;
+  ref: React.RefObject<HTMLElement | null>;
   observe: (element: HTMLElement) => void;
   unobserve: (element: HTMLElement) => void;
   disconnect: () => void;
