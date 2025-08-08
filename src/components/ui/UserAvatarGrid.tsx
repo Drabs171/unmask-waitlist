@@ -97,7 +97,7 @@ const UserAvatarGrid: React.FC<UserAvatarGridProps> = ({
     }
   };
 
-  const containerVariants = {
+  const containerVariants: any = {
     hidden: { opacity: 0, scale: 0.8 },
     visible: {
       opacity: 1,
@@ -109,14 +109,14 @@ const UserAvatarGrid: React.FC<UserAvatarGridProps> = ({
     },
   };
 
-  const avatarVariants = {
+  const avatarVariants: any = {
     hidden: { opacity: 0, scale: 0, rotate: -180 },
     visible: {
       opacity: 1,
       scale: 1,
       rotate: 0,
       transition: {
-        type: 'spring',
+        type: 'spring' as any,
         stiffness: 200,
         damping: 15,
         duration: shouldReduceMotion ? 0.1 : 0.6,
@@ -124,25 +124,25 @@ const UserAvatarGrid: React.FC<UserAvatarGridProps> = ({
     },
   };
 
-  const hoverVariants = {
+  const hoverVariants: any = {
     hover: {
       scale: shouldReduceMotion ? 1 : 1.1,
       z: 10,
       filter: shouldReduceMotion ? 'blur(2px)' : 'blur(1px)',
       transition: {
         duration: 0.3,
-        ease: 'easeOut',
+        ease: 'easeOut' as any,
       },
     },
   };
 
-  const pulseVariants = {
+  const pulseVariants: any = {
     pulse: {
       scale: [1, 1.05, 1],
       transition: {
         duration: 2,
         repeat: Infinity,
-        ease: 'easeInOut',
+         ease: 'easeInOut' as any,
       },
     },
   };
