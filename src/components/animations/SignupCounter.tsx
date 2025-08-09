@@ -248,21 +248,15 @@ const SignupCounter: React.FC<SignupCounterProps> = ({
       >
         {/* Main Counter */}
         <div className={cn(
-          'text-transparent bg-clip-text bg-gradient-to-r from-accent to-secondary',
           sizeClasses[size]
         )}>
           {prefix}
-          <span className="tabular-nums">
+          <span className="tabular-nums text-transparent bg-clip-text bg-gradient-to-r from-accent to-secondary">
             {renderAnimatedDigits(displayCount)}
           </span>
-          <motion.span
-            className="text-text-secondary ml-1"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1, duration: 0.5 }}
-          >
+          <span className="text-text-secondary ml-1">
             {suffix}
-          </motion.span>
+          </span>
         </div>
 
         {/* Sparkle Effects */}
