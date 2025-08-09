@@ -228,12 +228,13 @@ const MobileInput: React.FC<MobileInputProps> = ({
       {label && variant === 'floating' && (
         <motion.label
           className={cn(
-            'absolute left-4 pointer-events-none transition-all duration-200 text-text-secondary',
+            'absolute pointer-events-none transition-all duration-200 text-text-secondary',
+            // Move label to the right of the leading icon when idle
             isFocused || hasValue
-              ? 'top-2 text-xs translate-y-0 text-accent'
-              : size === 'lg' ? 'top-8 text-lg translate-y-0'
-                : size === 'md' ? 'top-6 text-base translate-y-0'
-                : 'top-5 text-sm translate-y-0'
+              ? 'left-4 top-2 text-xs translate-y-0 text-accent'
+              : Icon
+                ? (size === 'lg' ? 'left-14 top-8 text-lg' : size === 'md' ? 'left-12 top-6 text-base' : 'left-10 top-5 text-sm')
+                : (size === 'lg' ? 'left-4 top-8 text-lg' : size === 'md' ? 'left-4 top-6 text-base' : 'left-4 top-5 text-sm')
           )}
           animate={shouldReduceMotion ? {} : {
             y: isFocused || hasValue ? -2 : 0,
