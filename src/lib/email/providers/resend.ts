@@ -20,11 +20,8 @@ export class ResendProvider implements EmailProvider {
         html: template.html,
         text: template.text,
         headers: template.metadata as Record<string, string> | undefined,
-        // Resend requires tag names to be unique; using each tag as its own name
-        tags: template.tags?.map((t) => ({
-          name: String(t).toLowerCase().replace(/[^a-z0-9_-]/gi, '_').slice(0, 50),
-          value: '1',
-        })),
+        // Temporarily disable tags to avoid duplication errors during rollout
+        // tags: template.tags?.map((t) => ({ name: String(t).toLowerCase().replace(/[^a-z0-9_-]/gi, '_').slice(0, 50), value: '1' })),
       });
       if ((result as any).error) {
         throw new Error((result as any).error?.message || 'Resend send failed');
