@@ -274,6 +274,9 @@ const MobileInput: React.FC<MobileInputProps> = ({
           onBlur={handleBlur}
           className={inputClasses}
           maxLength={maxLength}
+          inputMode={type === 'email' ? 'email' : undefined}
+          autoComplete={type === 'email' ? 'email' : undefined}
+          enterKeyHint="done"
           {...getSmartKeyboardProps()}
           {...props}
           placeholder={variant === 'floating' ? '' : (props.placeholder as string)}
