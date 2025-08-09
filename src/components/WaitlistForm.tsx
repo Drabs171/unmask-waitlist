@@ -307,7 +307,6 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({
             transition={{ delay: 0.6, duration: 0.4 }}
           >
             <SignupCounter 
-              targetCount={1248} 
               animateOnMount={true}
               size="md"
             />
@@ -359,7 +358,6 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({
           className="mb-8"
         >
           <SignupCounter 
-            targetCount={1247}
             size="lg"
             incrementInterval={45000} // 45 seconds
           />
