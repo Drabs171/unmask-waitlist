@@ -30,6 +30,7 @@ const SignupCounter: React.FC<SignupCounterProps> = ({
   const [displayCount, setDisplayCount] = useState(startCount);
   const [actualCount, setActualCount] = useState(targetCount || 0);
   const [isLoading, setIsLoading] = useState(!targetCount);
+  const [bump, setBump] = useState(false);
   const shouldReduceMotion = useReducedMotion();
   const counterRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(counterRef, { once: true, margin: '-100px' });
@@ -138,13 +139,16 @@ const SignupCounter: React.FC<SignupCounterProps> = ({
       hasAnimated.current = true;
       const target = targetCount || actualCount;
       animateToTarget(target);
+      // Subtle +1 pulse when value increases
+      setBump(true);
+      const bumpTimer = setTimeout(() => setBump(false), 1200);
       
       // Start auto-increment after initial animation
       const timer = setTimeout(() => {
         startAutoIncrement();
       }, duration + 1000);
 
-      return () => clearTimeout(timer);
+      return () => { clearTimeout(timer); clearTimeout(bumpTimer); };
     }
   }, [isInView, animateOnMount, targetCount, actualCount, isLoading, duration]);
 
@@ -251,9 +255,13 @@ const SignupCounter: React.FC<SignupCounterProps> = ({
           sizeClasses[size]
         )}>
           {prefix}
-          <span className="tabular-nums font-extrabold text-white">
+          <motion.span
+            className="tabular-nums font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-accent to-primary-blue"
+            animate={bump ? { scale: [1, 1.08, 1] } : { scale: 1 }}
+            transition={{ duration: 0.6, ease: 'easeOut' }}
+          >
             {renderAnimatedDigits(displayCount)}
-          </span>
+          </motion.span>
           <span className="text-text-secondary ml-1">
             {suffix}
           </span>
