@@ -63,20 +63,25 @@ export class EmailService {
     }
 
     // Try each provider in order until one succeeds
+    const attempts: Array<{ provider: string; success: boolean; error?: string }> = [];
     for (const provider of this.providers) {
       try {
         const isConfigured = await provider.isConfigured();
         if (!isConfigured) {
+          attempts.push({ provider: provider.constructor.name, success: false, error: 'not configured' });
           continue;
         }
 
         const result = await provider.sendEmail(template);
         if (result.success) {
-          return result;
+          attempts.push({ provider: result.provider || provider.constructor.name, success: true });
+          return { ...result, attempts };
         }
 
+        attempts.push({ provider: result.provider || provider.constructor.name, success: false, error: result.error });
         console.warn(`Email provider ${result.provider} failed:`, result.error);
       } catch (error) {
+        attempts.push({ provider: provider.constructor.name, success: false, error: (error as Error).message });
         console.error('Email provider error:', error);
         continue;
       }
@@ -86,6 +91,9 @@ export class EmailService {
       success: false,
       error: 'All email providers failed',
       provider: 'fallback',
+      // Debug-only metadata (safe: no secrets)
+      attempts,
+      from: this.fromEmail,
     };
   }
 
