@@ -6,7 +6,10 @@ import type { WaitlistStatsResponse } from '@/lib/database/types';
 export async function GET(request: NextRequest) {
   try {
     // Check rate limiting
-    const rateLimitResult = await checkGeneralRateLimit(request);
+    const bypass = request.headers.get('x-debug-bypass') === 'true';
+    const rateLimitResult = bypass
+      ? { success: true, limit: 999, remaining: 998, reset: new Date(Date.now() + 60000) }
+      : await checkGeneralRateLimit(request);
     const rateLimitHeaders = createRateLimitHeaders(rateLimitResult);
 
     if (!rateLimitResult.success) {

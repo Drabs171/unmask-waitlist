@@ -28,7 +28,7 @@ const SignupCounter: React.FC<SignupCounterProps> = ({
   size = 'md',
 }) => {
   const [displayCount, setDisplayCount] = useState(startCount);
-  const [actualCount, setActualCount] = useState(targetCount || 1247);
+  const [actualCount, setActualCount] = useState(targetCount || 0);
   const [isLoading, setIsLoading] = useState(!targetCount);
   const shouldReduceMotion = useReducedMotion();
   const counterRef = useRef<HTMLDivElement>(null);
@@ -44,13 +44,13 @@ const SignupCounter: React.FC<SignupCounterProps> = ({
     xl: 'text-3xl font-bold',
   };
 
-  // Fetch real waitlist count
+  // Fetch real waitlist count (use stats endpoint for total signups)
   const fetchWaitlistCount = async () => {
     try {
-      const response = await fetch('/api/waitlist');
+      const response = await fetch('/api/waitlist/stats');
       if (response.ok) {
         const data = await response.json();
-        const newCount = data.count || 1247;
+        const newCount = Number(data.total_signups ?? 0);
         setActualCount(newCount);
         setIsLoading(false);
         return newCount;
@@ -113,12 +113,20 @@ const SignupCounter: React.FC<SignupCounterProps> = ({
     return num.toLocaleString();
   };
 
-  // Fetch count on mount if not provided
+  // Fetch count on mount and refresh periodically
   useEffect(() => {
-    if (!targetCount && isLoading) {
-      fetchWaitlistCount();
+    let interval: NodeJS.Timeout | undefined;
+    const boot = async () => {
+      await fetchWaitlistCount();
+      interval = setInterval(fetchWaitlistCount, 30000);
+    };
+    if (!targetCount) {
+      boot();
     }
-  }, [targetCount, isLoading]);
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [targetCount]);
 
   // Initial animation when component comes into view
   useEffect(() => {
