@@ -14,6 +14,7 @@ interface TypewriterTextProps {
   cursorClassName?: string;
   onComplete?: () => void;
   glowOnComplete?: boolean;
+  neonOutline?: boolean;
 }
 
 const TypewriterText: React.FC<TypewriterTextProps> = ({
@@ -25,6 +26,7 @@ const TypewriterText: React.FC<TypewriterTextProps> = ({
   cursorClassName,
   onComplete,
   glowOnComplete = false,
+  neonOutline = false,
 }) => {
   const { displayText, isComplete, showCursor: cursorVisible, isTyping } = useSimpleTypewriter(text, {
     typeSpeed,
@@ -43,7 +45,13 @@ const TypewriterText: React.FC<TypewriterTextProps> = ({
       transition={{ duration: 0.3 }}
       layout
     >
-      <span className="relative z-10">
+      <span
+        className="relative z-10"
+        style={neonOutline ? ({
+          WebkitTextStroke: '1px rgba(255, 107, 157, 0.55)',
+          textShadow: '0 0 6px rgba(255, 107, 157, 0.6), 0 0 14px rgba(255, 107, 157, 0.35)'
+        } as any) : undefined}
+      >
         {displayText}
         {showCursor && cursorVisible && (
           <motion.span

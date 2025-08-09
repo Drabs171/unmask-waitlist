@@ -143,6 +143,7 @@ const Hero: React.FC<HeroProps> = ({ onJoinWaitlist }) => {
               startDelay={200}
               onComplete={handleTypewriterComplete}
               glowOnComplete={!shouldReduceMotion}
+              neonOutline={!shouldReduceMotion}
             />
           </div>
         </FadeIn>
