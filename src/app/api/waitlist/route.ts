@@ -147,7 +147,8 @@ export async function POST(request: NextRequest) {
 
       // Send verification email
       const emailService = getEmailService();
-      const emailResult = await emailService.sendVerificationEmail(submission.email, verificationToken);
+      const publicUrl = process.env.NEXT_PUBLIC_URL || `https://${request.headers.get('host') || 'www.unmask.life'}`;
+      const emailResult = await emailService.sendVerificationEmail(submission.email, verificationToken, publicUrl);
       const debugEmail = true;
       
       if (!emailResult.success) {
@@ -195,7 +196,8 @@ export async function POST(request: NextRequest) {
 
     // Send verification email
     const emailService = getEmailService();
-    const emailResult = await emailService.sendVerificationEmail(submission.email, verificationToken);
+    const publicUrl = process.env.NEXT_PUBLIC_URL || `https://${request.headers.get('host') || 'www.unmask.life'}`;
+    const emailResult = await emailService.sendVerificationEmail(submission.email, verificationToken, publicUrl);
     const debugEmail = true;
     
     if (!emailResult.success) {

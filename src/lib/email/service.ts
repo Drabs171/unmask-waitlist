@@ -97,7 +97,7 @@ export class EmailService {
     };
   }
 
-  async sendVerificationEmail(email: string, verificationToken: string): Promise<EmailResponse> {
+  async sendVerificationEmail(email: string, verificationToken: string, baseUrlOverride?: string): Promise<EmailResponse> {
     const unsubscribeToken = generateSecureToken();
     
     const emailData: WaitlistEmailData = {
@@ -106,7 +106,11 @@ export class EmailService {
       unsubscribeToken,
     };
 
-    const template = generateEmailTemplate(EmailType.VERIFICATION, emailData);
+    const template = generateEmailTemplate(
+      EmailType.VERIFICATION,
+      emailData,
+      baseUrlOverride || process.env.NEXT_PUBLIC_URL
+    );
 
     return this.sendEmail({
       to: email,
