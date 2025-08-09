@@ -39,19 +39,20 @@
     @apply scroll-smooth;
     /* Smooth scrolling respects user preferences */
     scroll-behavior: smooth;
-    /* Enable hardware acceleration globally */
-    transform: translateZ(0);
+    /* Avoid forced transforms on iOS to prevent focus scroll glitches */
+    /* transform: translateZ(0); */
   }
   
   /* Performance optimizations for animations */
   body {
     /* Enable hardware acceleration */
-    transform: translateZ(0);
+    /* transform: translateZ(0); */
     /* Improve font rendering during animations */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     /* Force compositor layer */
     will-change: transform;
+    overscroll-behavior-y: contain;
   }
   
   /* Respect reduced motion preference */

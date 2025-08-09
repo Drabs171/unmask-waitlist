@@ -184,7 +184,15 @@ export default function Home() {
         pullText="Pull to refresh"
         releaseText="Release to update"
       >
-        {mainContent}
+        {/* Prevent pull-to-refresh while input is focused to reduce jumpiness */}
+        <div onTouchStart={(e) => {
+          const active = document.activeElement as HTMLElement | null;
+          if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA')) {
+            e.stopPropagation();
+          }
+        }}>
+          {mainContent}
+        </div>
       </PullToRefresh>
     );
   }

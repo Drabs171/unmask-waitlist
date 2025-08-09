@@ -80,6 +80,8 @@ const MobileInput: React.FC<MobileInputProps> = ({
       navigator.vibrate(5);
     }
     
+    // Avoid iOS auto-zoom jumping
+    try { e.currentTarget.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch {}
     onFocus?.(e);
   };
 
