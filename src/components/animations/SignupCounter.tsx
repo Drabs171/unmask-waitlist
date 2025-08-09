@@ -251,7 +251,7 @@ const SignupCounter: React.FC<SignupCounterProps> = ({
           sizeClasses[size]
         )}>
           {prefix}
-          <span className="tabular-nums text-transparent bg-clip-text bg-gradient-to-r from-accent to-secondary">
+          <span className="tabular-nums font-extrabold text-white">
             {renderAnimatedDigits(displayCount)}
           </span>
           <span className="text-text-secondary ml-1">
