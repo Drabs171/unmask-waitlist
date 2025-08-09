@@ -80,7 +80,7 @@ export async function GET(request: NextRequest) {
       daily_stats: dailyStats,
     };
 
-    return NextResponse.json(response, { headers: rateLimitHeaders });
+    return NextResponse.json(response, { headers: { ...rateLimitHeaders, 'Cache-Control': 'no-store' } });
 
   } catch (error) {
     console.error('Error fetching waitlist statistics:', error);

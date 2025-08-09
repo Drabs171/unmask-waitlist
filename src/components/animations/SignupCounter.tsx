@@ -47,10 +47,10 @@ const SignupCounter: React.FC<SignupCounterProps> = ({
   // Fetch real waitlist count (use stats endpoint for total signups)
   const fetchWaitlistCount = async () => {
     try {
-      const response = await fetch('/api/waitlist/stats');
+      const response = await fetch('/api/waitlist/stats', { cache: 'no-store' });
       if (response.ok) {
         const data = await response.json();
-        const newCount = Number(data.total_signups ?? 0);
+        const newCount = Number(data.verified_signups ?? data.total_signups ?? 0);
         setActualCount(newCount);
         setIsLoading(false);
         return newCount;

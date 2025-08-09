@@ -259,14 +259,14 @@ export async function GET(request: NextRequest) {
 
     // Get verified email count
     const count = await getVerifiedCount();
-    return NextResponse.json({ count }, { headers: rateLimitHeaders });
+    return NextResponse.json(
+      { count },
+      { headers: { ...rateLimitHeaders, 'Cache-Control': 'no-store' } }
+    );
 
   } catch (error) {
     console.error('Error getting waitlist count:', error);
-    return NextResponse.json(
-      { count: 1247 }, // Fallback count
-      { status: 200 }
-    );
+    return NextResponse.json({ count: 0 }, { status: 200, headers: { 'Cache-Control': 'no-store' } });
   }
 }
 
