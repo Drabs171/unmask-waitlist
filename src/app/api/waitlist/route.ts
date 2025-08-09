@@ -147,7 +147,8 @@ export async function POST(request: NextRequest) {
 
       // Send verification email
       const emailService = getEmailService();
-      const publicUrl = process.env.NEXT_PUBLIC_URL || new URL(request.url).origin;
+      // Always use the public site URL for email links to avoid preview/SSO domains
+      const publicUrl = process.env.NEXT_PUBLIC_URL || 'https://www.unmask.life';
       const emailResult = await emailService.sendVerificationEmail(submission.email, verificationToken, publicUrl);
       const debugEmail = true;
       
@@ -196,7 +197,8 @@ export async function POST(request: NextRequest) {
 
     // Send verification email
     const emailService = getEmailService();
-    const publicUrl = process.env.NEXT_PUBLIC_URL || new URL(request.url).origin;
+    // Always use the public site URL for email links to avoid preview/SSO domains
+    const publicUrl = process.env.NEXT_PUBLIC_URL || 'https://www.unmask.life';
     const emailResult = await emailService.sendVerificationEmail(submission.email, verificationToken, publicUrl);
     const debugEmail = true;
     
