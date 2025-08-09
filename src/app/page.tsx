@@ -87,7 +87,11 @@ export default function Home() {
           "mx-auto",
           isMobile ? "max-w-sm" : "max-w-4xl"
         )}>
-          <WaitlistForm />
+          <div className={cn(
+            isMobile ? "space-y-3" : "space-y-6"
+          )}>
+            <WaitlistForm />
+          </div>
         </div>
       </motion.section>
 

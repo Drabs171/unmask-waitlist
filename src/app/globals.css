@@ -104,6 +104,9 @@
     text-rendering: optimizeLegibility;
     -webkit-text-size-adjust: 100%;
     padding-bottom: env(safe-area-inset-bottom);
+    /* Avoid background blur effects while keyboard open on mobile */
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
   }
   
   /* High contrast mode support */

@@ -61,13 +61,13 @@ const MobileInput: React.FC<MobileInputProps> = ({
   // Size variants with touch optimization
   const sizeVariants = {
     sm: touchOptimized 
-      ? 'h-touch-target px-touch-sm text-mobile-caption'
+      ? 'h-touch-target px-touch-sm text-base' // enforce >=16px to prevent iOS zoom
       : 'h-10 px-3 text-sm',
     md: touchOptimized
-      ? 'h-touch-target-lg px-touch-md text-mobile-body'
+      ? 'h-touch-target-lg px-touch-md text-base' // enforce >=16px on iOS
       : 'h-12 px-4 text-base',
     lg: touchOptimized
-      ? 'h-touch-target-xl px-touch-lg text-mobile-subtitle'
+      ? 'h-touch-target-xl px-touch-lg text-lg'
       : 'h-14 px-6 text-lg',
   };
 
