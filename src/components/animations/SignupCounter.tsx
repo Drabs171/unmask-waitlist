@@ -256,7 +256,7 @@ const SignupCounter: React.FC<SignupCounterProps> = ({
         )}>
           {prefix}
           <motion.span
-            className="tabular-nums font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-accent to-primary-blue"
+            className="tabular-nums font-extrabold text-white"
             animate={bump ? { scale: [1, 1.08, 1] } : { scale: 1 }}
             transition={{ duration: 0.6, ease: 'easeOut' }}
           >
