@@ -41,6 +41,7 @@ const TypewriterText: React.FC<TypewriterTextProps> = ({
         textShadow: glowOnComplete && isComplete ? '0 0 20px rgba(255, 107, 157, 0.5)' : 'none',
       }}
       transition={{ duration: 0.3 }}
+      layout
     >
       <span className="relative z-10">
         {displayText}

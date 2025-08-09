@@ -65,6 +65,7 @@ const UnmaskLogo: React.FC<UnmaskLogoProps> = ({
         onHoverStart={() => setIsHovered(true)}
         onHoverEnd={() => setIsHovered(false)}
         {...hoverVariants}
+        layout
       >
         <h1 
           className={cn(

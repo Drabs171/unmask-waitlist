@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import MobileButton from '@/components/ui/MobileButton';
 import ShareButton from '@/components/ui/ShareButton';
@@ -26,9 +26,9 @@ const Hero: React.FC<HeroProps> = ({ onJoinWaitlist }) => {
   const shouldReduceMotion = useReducedMotion();
   const { isMobile, isTablet, viewportHeight } = useMobileDetection();
 
-  const handleTypewriterComplete = () => {
+  const handleTypewriterComplete = useCallback(() => {
     setTypewriterComplete(true);
-  };
+  }, []);
 
   const handleJoinWaitlist = () => {
     // Add a subtle vibration effect on mobile devices
@@ -72,6 +72,7 @@ const Hero: React.FC<HeroProps> = ({ onJoinWaitlist }) => {
             whileHover={{ scale: shouldReduceMotion ? 1 : 1.02 }}
             onTapStart={() => isMobile && setLogoHovered(true)}
             onTap={() => isMobile && setTimeout(() => setLogoHovered(false), 200)}
+            layout
           >
             <UnmaskLogo 
               size={isMobile ? "lg" : "xl"} 
