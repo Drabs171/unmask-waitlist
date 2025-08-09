@@ -14,6 +14,7 @@ interface SignupCounterProps {
   animateOnMount?: boolean;
   incrementInterval?: number;
   size?: 'sm' | 'md' | 'lg' | 'xl';
+  enableAutoIncrement?: boolean; // demo mode only
 }
 
 const SignupCounter: React.FC<SignupCounterProps> = ({
@@ -26,9 +27,11 @@ const SignupCounter: React.FC<SignupCounterProps> = ({
   animateOnMount = true,
   incrementInterval = 30000, // Auto-increment every 30 seconds
   size = 'md',
+  enableAutoIncrement = false,
 }) => {
-  const [displayCount, setDisplayCount] = useState(startCount);
-  const [actualCount, setActualCount] = useState(targetCount || 0);
+  const [displayCount, setDisplayCount] = useState(0);
+  const [actualCount, setActualCount] = useState(0);
+  const [initialized, setInitialized] = useState(false);
   const [isLoading, setIsLoading] = useState(!targetCount);
   const [bump, setBump] = useState(false);
   const shouldReduceMotion = useReducedMotion();
@@ -105,13 +108,14 @@ const SignupCounter: React.FC<SignupCounterProps> = ({
 
   // Auto-increment functionality
   const startAutoIncrement = React.useCallback(() => {
+    if (!enableAutoIncrement) return;
     if (incrementInterval > 0) {
       incrementRef.current = setInterval(() => {
         const increment = Math.floor(Math.random() * 3) + 1; // Random increment 1-3
         setDisplayCount(prev => prev + increment);
       }, incrementInterval);
     }
-  }, [incrementInterval]);
+  }, [incrementInterval, enableAutoIncrement]);
 
   // Format number with commas
   const formatNumber = (num: number): string => {
@@ -123,6 +127,7 @@ const SignupCounter: React.FC<SignupCounterProps> = ({
     let interval: NodeJS.Timeout | undefined;
     const boot = async () => {
       await fetchWaitlistCount();
+      setInitialized(true);
       interval = setInterval(fetchWaitlistCount, 30000);
     };
     if (!targetCount) {
@@ -135,9 +140,9 @@ const SignupCounter: React.FC<SignupCounterProps> = ({
 
   // Initial animation when component comes into view
   useEffect(() => {
-    if ((isInView || animateOnMount) && !hasAnimated.current && !isLoading) {
+    if ((isInView || animateOnMount) && !hasAnimated.current && !isLoading && initialized) {
       hasAnimated.current = true;
-      const target = targetCount || actualCount;
+      const target = actualCount;
       animateToTarget(target);
       // Subtle +1 pulse when value increases
       setBump(true);
@@ -151,6 +156,14 @@ const SignupCounter: React.FC<SignupCounterProps> = ({
       return () => { clearTimeout(timer); clearTimeout(bumpTimer); };
     }
   }, [isInView, animateOnMount, targetCount, actualCount, isLoading, duration]);
+
+  // When a new value is fetched, animate to it to stay in sync with DB
+  useEffect(() => {
+    if (hasAnimated.current && !isLoading && actualCount !== displayCount) {
+      animateToTarget(actualCount, 800);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [actualCount]);
 
   // Cleanup
   useEffect(() => {

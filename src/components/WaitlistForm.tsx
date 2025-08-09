@@ -359,7 +359,7 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({
         >
           <SignupCounter 
             size="lg"
-            incrementInterval={45000} // 45 seconds
+            enableAutoIncrement={false}
           />
         </motion.div>
       )}
