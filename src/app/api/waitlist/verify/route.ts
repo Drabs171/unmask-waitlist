@@ -187,39 +187,19 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // Verify token with POST method
-    const verifyResponse = await POST(request);
+    // Verify token by POSTing to this endpoint with the token
+    const origin = new URL(request.url).origin;
+    const verifyResponse = await fetch(`${origin}/api/waitlist/verify`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token }),
+      cache: 'no-store',
+    });
     const verifyData = await verifyResponse.json();
 
     if (verifyData.success) {
-      return new NextResponse(`
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Email Verified - Unmask</title>
-          <style>
-            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 20px; background: #0a0a0a; color: #fff; }
-            .container { max-width: 600px; margin: 0 auto; text-align: center; padding: 40px 20px; }
-            .success { color: #4ecdc4; }
-            .button { display: inline-block; padding: 12px 24px; background: linear-gradient(135deg, #ff6b9d 0%, #4ecdc4 100%); color: white; text-decoration: none; border-radius: 8px; margin-top: 20px; }
-            .celebration { font-size: 48px; margin: 20px 0; }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <div class="celebration">🎉</div>
-            <h1 class="success">Email Verified Successfully!</h1>
-            <p>Welcome to the Unmask waitlist! You're all set to be notified when we launch.</p>
-            <p>Get ready for authentic dating experiences that prioritize real connections over endless swiping.</p>
-            <a href="/" class="button">Return to Homepage</a>
-          </div>
-        </body>
-        </html>
-      `, {
-        headers: { 'Content-Type': 'text/html' },
-      });
+      // Redirect to homepage with a verified flag
+      return NextResponse.redirect(`${origin}/?verified=1`, { status: 302 });
     } else {
       return new NextResponse(`
         <!DOCTYPE html>

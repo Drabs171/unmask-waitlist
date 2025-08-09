@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Hero, Features, SocialProof } from '@/components/sections';
 import WaitlistForm from '@/components/WaitlistForm';
 import MobileNavigation from '@/components/navigation/MobileNavigation';
@@ -14,6 +14,7 @@ import { cn } from '@/utils/cn';
 
 export default function Home() {
   const [, setShowWaitlistForm] = useState(false);
+  const [verifiedBanner, setVerifiedBanner] = useState(false);
   const { isMobile, isTablet, safeAreaInsets } = useMobileDetection();
   const { trackCTAClick } = useButtonTracking();
 
@@ -52,6 +53,11 @@ export default function Home() {
         paddingBottom: isMobile ? Math.max(safeAreaInsets.bottom, 16) : 0
       }}
     >
+      {verifiedBanner && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[100] bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg">
+          Email verified! Welcome to the waitlist.
+        </div>
+      )}
       {/* Mobile Navigation */}
       {isMobile && (
         <MobileNavigation onJoinWaitlist={handleJoinWaitlist} />
@@ -180,4 +186,25 @@ export default function Home() {
   }
 
   return analyticsWrappedContent;
+}
+
+// Show verification banner when redirected from /api/waitlist/verify
+if (typeof window !== 'undefined') {
+  try {
+    const url = new URL(window.location.href);
+    if (url.searchParams.get('verified') === '1') {
+      // Delay to ensure component mount
+      setTimeout(() => {
+        const evt = new CustomEvent('unmask:verified');
+        window.dispatchEvent(evt);
+        url.searchParams.delete('verified');
+        window.history.replaceState({}, '', url.toString());
+      }, 0);
+    }
+    window.addEventListener('unmask:verified', () => {
+      const rootSetter = (window as any).__setVerifiedBanner as ((v: boolean) => void) | undefined;
+      if (rootSetter) rootSetter(true);
+      setTimeout(() => rootSetter && rootSetter(false), 4000);
+    });
+  } catch {}
 }

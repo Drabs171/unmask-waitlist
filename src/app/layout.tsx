@@ -230,6 +230,8 @@ export default function RootLayout({
         
         {/* Main content wrapper */}
         <div id="main-content" className="min-h-screen">
+          {/* Verified banner injected via window hook from /api/waitlist/verify redirect */}
+          <div id="verified-banner-root" className="fixed top-4 left-1/2 -translate-x-1/2 z-[100] hidden"></div>
           {children}
         </div>
         
