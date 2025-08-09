@@ -159,106 +159,75 @@ export async function GET(request: NextRequest) {
     const token = searchParams.get('token');
 
     if (!token) {
-      return new NextResponse(`
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Invalid Verification Link - Unmask</title>
-          <style>
-            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 20px; background: #0a0a0a; color: #fff; }
-            .container { max-width: 600px; margin: 0 auto; text-align: center; padding: 40px 20px; }
-            .error { color: #ff6b9d; }
-            .button { display: inline-block; padding: 12px 24px; background: linear-gradient(135deg, #ff6b9d 0%, #4ecdc4 100%); color: white; text-decoration: none; border-radius: 8px; margin-top: 20px; }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <h1 class="error">Invalid Verification Link</h1>
-            <p>This verification link is invalid or malformed.</p>
-            <a href="/" class="button">Return to Homepage</a>
-          </div>
-        </body>
-        </html>
-      `, {
-        headers: { 'Content-Type': 'text/html' },
-        status: 400,
-      });
+      return htmlPage('Invalid Verification Link', 'This verification link is invalid or malformed.', 400);
     }
 
-    // Verify token by POSTing to this endpoint with the token
-    const origin = new URL(request.url).origin;
-    const verifyResponse = await fetch(`${origin}/api/waitlist/verify`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token }),
-      cache: 'no-store',
-    });
-    const verifyData = await verifyResponse.json();
-
-    if (verifyData.success) {
-      // Redirect to homepage with a verified flag
-      return NextResponse.redirect(`${origin}/?verified=1`, { status: 302 });
-    } else {
-      return new NextResponse(`
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Verification Failed - Unmask</title>
-          <style>
-            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 20px; background: #0a0a0a; color: #fff; }
-            .container { max-width: 600px; margin: 0 auto; text-align: center; padding: 40px 20px; }
-            .error { color: #ff6b9d; }
-            .button { display: inline-block; padding: 12px 24px; background: linear-gradient(135deg, #ff6b9d 0%, #4ecdc4 100%); color: white; text-decoration: none; border-radius: 8px; margin-top: 20px; }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <h1 class="error">Verification Failed</h1>
-            <p>${verifyData.message}</p>
-            <a href="/" class="button">Return to Homepage</a>
-          </div>
-        </body>
-        </html>
-      `, {
-        headers: { 'Content-Type': 'text/html' },
-        status: verifyResponse.status,
-      });
+    // Optional debug bypass for rate limit
+    const bypass = request.headers.get('x-debug-bypass') === 'true';
+    if (!bypass) {
+      const rateLimitResult = await checkEmailVerificationRateLimit(request);
+      if (!rateLimitResult.success) {
+        return htmlPage('Too Many Attempts', 'Please try again later.', 429);
+      }
     }
+
+    // Validate token format/age
+    if (!validateVerificationToken(token, 24)) {
+      return htmlPage('Verification Failed', 'Verification token has expired. Please request a new one.', 400);
+    }
+
+    const emailRecord = await getEmailByVerificationToken(token);
+    if (!emailRecord) {
+      return htmlPage('Verification Failed', 'Invalid or expired verification token', 404);
+    }
+
+    if (!emailRecord.verified) {
+      await verifyEmailById(emailRecord.id);
+      const emailService = getEmailService();
+      const decryptedEmail = decryptData(emailRecord.email);
+      const welcome = await emailService.sendWelcomeEmail(
+        decryptedEmail,
+        emailRecord.unsubscribe_token,
+        undefined
+      );
+      if (!welcome.success) {
+        console.error('Welcome email failed:', welcome.error);
+      }
+    }
+
+    return htmlPage('Email Verified Successfully!', "Welcome to the Unmask waitlist! You're all set to be notified when we launch.", 200, true);
 
   } catch (error) {
     console.error('GET verification error:', error);
-    
-    return new NextResponse(`
-      <!DOCTYPE html>
-      <html lang="en">
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Verification Error - Unmask</title>
-        <style>
-          body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 20px; background: #0a0a0a; color: #fff; }
-          .container { max-width: 600px; margin: 0 auto; text-align: center; padding: 40px 20px; }
-          .error { color: #ff6b9d; }
-          .button { display: inline-block; padding: 12px 24px; background: linear-gradient(135deg, #ff6b9d 0%, #4ecdc4 100%); color: white; text-decoration: none; border-radius: 8px; margin-top: 20px; }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <h1 class="error">Something Went Wrong</h1>
-          <p>We couldn't verify your email at this time. Please try again later.</p>
-          <a href="/" class="button">Return to Homepage</a>
-        </div>
-      </body>
-      </html>
-    `, {
-      headers: { 'Content-Type': 'text/html' },
-      status: 500,
-    });
+    return htmlPage('Verification Error', "We couldn't verify your email at this time. Please try again later.", 500);
   }
+}
+
+function htmlPage(title: string, message: string, status = 200, success = false): NextResponse {
+  return new NextResponse(`
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>${title} - Unmask</title>
+      <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 20px; background: #0a0a0a; color: #fff; }
+        .container { max-width: 700px; margin: 0 auto; text-align: center; padding: 60px 24px; }
+        .title { color: ${success ? '#4ecdc4' : '#ff6b9d'}; font-size: 36px; font-weight: 800; margin-bottom: 16px; }
+        .msg { color: #ccc; font-size: 18px; margin-bottom: 28px; }
+        .button { display: inline-block; padding: 12px 24px; background: linear-gradient(135deg, #ff6b9d 0%, #4ecdc4 100%); color: white; text-decoration: none; border-radius: 9999px; margin-top: 8px; font-weight: 700; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <h1 class="title">${title}</h1>
+        <p class="msg">${message}</p>
+        <a href="/" class="button">Return to Homepage</a>
+      </div>
+    </body>
+    </html>
+  `, { headers: { 'Content-Type': 'text/html' }, status });
 }
 
 // Handle preflight requests
