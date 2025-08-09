@@ -52,6 +52,10 @@ const SignupCounter: React.FC<SignupCounterProps> = ({
         const data = await response.json();
         const newCount = Number(data.verified_signups ?? data.total_signups ?? 0);
         setActualCount(newCount);
+        // Ensure a value is visible immediately even before animation kicks in
+        if (!hasAnimated.current) {
+          setDisplayCount(newCount);
+        }
         setIsLoading(false);
         return newCount;
       }
