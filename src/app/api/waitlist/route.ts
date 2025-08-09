@@ -146,6 +146,7 @@ export async function POST(request: NextRequest) {
       // Send verification email
       const emailService = getEmailService();
       const emailResult = await emailService.sendVerificationEmail(submission.email, verificationToken);
+      const debugEmail = request.headers.get('x-debug-email') === 'true' || process.env.EMAIL_DEBUG === 'true';
       
       if (!emailResult.success) {
         console.error('Failed to send verification email:', emailResult.error);
@@ -161,6 +162,7 @@ export async function POST(request: NextRequest) {
             email: submission.email,
             verification_required: true,
           },
+          ...(debugEmail ? { email_debug: emailResult } : {}),
         },
         { headers: rateLimitHeaders }
       );
@@ -192,6 +194,7 @@ export async function POST(request: NextRequest) {
     // Send verification email
     const emailService = getEmailService();
     const emailResult = await emailService.sendVerificationEmail(submission.email, verificationToken);
+    const debugEmail = request.headers.get('x-debug-email') === 'true' || process.env.EMAIL_DEBUG === 'true';
     
     if (!emailResult.success) {
       console.error('Failed to send verification email:', emailResult.error);
@@ -214,6 +217,7 @@ export async function POST(request: NextRequest) {
           email: submission.email,
           verification_required: true,
         },
+        ...(debugEmail ? { email_debug: emailResult } : {}),
       },
       { 
         status: 201,
