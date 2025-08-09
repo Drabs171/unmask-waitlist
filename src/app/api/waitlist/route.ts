@@ -128,15 +128,11 @@ export async function POST(request: NextRequest) {
       if (existingEmail.verified) {
         return NextResponse.json(
           {
-            success: true,
-            message: 'You are already on our waitlist!',
-            data: {
-              id: existingEmail.id,
-              email: submission.email,
-              verification_required: false,
-            },
+            success: false,
+            error: 'Email already verified',
+            message: 'This email is already verified and on the waitlist.',
           },
-          { headers: rateLimitHeaders }
+          { status: 409, headers: rateLimitHeaders }
         );
       }
 
