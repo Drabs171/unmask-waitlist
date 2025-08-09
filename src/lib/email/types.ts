@@ -13,6 +13,9 @@ export interface EmailResponse {
   messageId?: string;
   error?: string;
   provider: string;
+  // Debug-only optional fields for troubleshooting deployments
+  attempts?: Array<{ provider: string; success: boolean; error?: string }>;
+  from?: string;
 }
 
 export interface EmailProvider {
