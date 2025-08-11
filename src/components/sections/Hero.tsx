@@ -42,7 +42,7 @@ const Hero: React.FC<HeroProps> = ({ onJoinWaitlist }) => {
     <section 
       className="relative flex items-center justify-center px-4 overflow-hidden"
       style={{
-        minHeight: isMobile ? viewportHeight : '100vh',
+        minHeight: isMobile ? viewportHeight : '100dvh',
         paddingTop: isMobile ? '60px' : '0', // Account for mobile navigation
       }}
     >

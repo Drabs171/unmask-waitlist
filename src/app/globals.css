@@ -73,12 +73,8 @@
   
   /* Chrome-specific animation optimizations */
   @supports (-webkit-appearance: none) {
-    * {
-      /* Chrome hardware acceleration */
-      transform: translate3d(0, 0, 0);
-      /* Optimize for composite layers */
-      will-change: auto;
-    }
+    /* Removed forcing 3D transforms on all elements to avoid iOS focus/scroll bugs.
+       Keep GPU acceleration only on animated elements. */
     
     /* Optimize elements that will animate */
     [data-framer-name],
@@ -108,6 +104,11 @@
     /* Avoid background blur effects while keyboard open on mobile */
     -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
+  }
+
+  /* Prevent iOS zoom on input focus by ensuring minimum font-size */
+  input, textarea, select {
+    font-size: 16px;
   }
   
   /* High contrast mode support */
@@ -520,6 +521,43 @@
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  /* Mobile-friendly height utilities */
+  .h-dvh { height: 100dvh; }
+  .min-h-dvh { min-height: 100dvh; }
+  .min-h-lvh { min-height: 100lvh; }
+  .min-h-svh { min-height: 100svh; }
+
+  /* Touch target and spacing utilities for mobile */
+  .min-h-touch-target { min-height: 44px; }
+  .min-h-touch-target-lg { min-height: 48px; }
+  .min-h-touch-target-xl { min-height: 52px; }
+  .h-touch-target { height: 44px; }
+  .h-touch-target-lg { height: 48px; }
+  .h-touch-target-xl { height: 52px; }
+  .py-touch-xs { padding-top: 6px; padding-bottom: 6px; }
+  .py-touch-sm { padding-top: 8px; padding-bottom: 8px; }
+  .py-touch-md { padding-top: 10px; padding-bottom: 10px; }
+  .py-touch-lg { padding-top: 12px; padding-bottom: 12px; }
+  .px-touch-sm { padding-left: 12px; padding-right: 12px; }
+  .px-touch-md { padding-left: 14px; padding-right: 14px; }
+  .px-touch-lg { padding-left: 16px; padding-right: 16px; }
+  .px-touch-xl { padding-left: 18px; padding-right: 18px; }
+
+  /* Ensure minimum font-size to avoid iOS zoom on focus */
+  .text-button-sm { font-size: 16px; line-height: 1.25rem; }
+  .text-button-md { font-size: 16px; line-height: 1.5rem; }
+  .text-button-lg { font-size: 17px; line-height: 1.5rem; }
+  
+  /* Tap highlight and touch action utilities */
+  .tap-highlight-transparent { -webkit-tap-highlight-color: transparent; }
+  .touch-action-manipulation { touch-action: manipulation; }
+
+  /* Prefer dynamic viewport units on capable browsers */
+  @supports (height: 100dvh) {
+    .h-screen { height: 100dvh !important; }
+    .min-h-screen { min-height: 100dvh !important; }
   }
 
   /* Responsive text sizes */

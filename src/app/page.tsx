@@ -47,7 +47,7 @@ export default function Home() {
 
   const mainContent = (
     <main 
-      className="min-h-screen overflow-x-hidden" 
+      className="min-h-dvh overflow-x-hidden" 
       style={{ 
         background: '#0a0a0a',
         paddingBottom: isMobile ? Math.max(safeAreaInsets.bottom, 16) : 0
