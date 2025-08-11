@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { Mail, Sparkles, Heart } from 'lucide-react';
 import { cn } from '@/utils/cn';
@@ -39,6 +39,7 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({
   const [submitError, setSubmitError] = useState<string | null>(null);
   const shouldReduceMotion = useReducedMotion();
   const { isMobile, isTablet } = useMobileDetection();
+  const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
   const [showMobileCelebration, setShowMobileCelebration] = useState(false);
   const { 
     trackFormStart, 
@@ -60,6 +61,30 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({
   } = useRealTimeValidation(email, {
     debounceMs: 500,
   });
+
+  // Detect on-screen keyboard using VisualViewport where available
+  useEffect(() => {
+    if (typeof window === 'undefined' || !('visualViewport' in window)) return;
+    const vv = (window as any).visualViewport as VisualViewport | undefined;
+    if (!vv) return;
+
+    const threshold = 140; // px difference to consider keyboard open
+    const handleResize = () => {
+      try {
+        const delta = window.innerHeight - vv.height;
+        setIsKeyboardOpen(delta > threshold);
+      } catch {
+        // no-op
+      }
+    };
+    vv.addEventListener('resize', handleResize);
+    vv.addEventListener('scroll', handleResize);
+    handleResize();
+    return () => {
+      vv.removeEventListener('resize', handleResize);
+      vv.removeEventListener('scroll', handleResize);
+    };
+  }, []);
 
   // Handle email input changes
   const handleEmailChange = (value: string) => {
@@ -374,7 +399,7 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({
         transition={{ delay: 0.3 }}
       >
         {/* Email Input */}
-        <div className="space-y-2">
+        <div className="space-y-2" style={{ paddingBottom: isKeyboardOpen ? 8 : 0 }}>
           <MobileInput
             type="email"
             value={email}
@@ -404,8 +429,9 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({
               <ValidationFeedback
                 validationState={validationState}
                 email={email}
-                showProgress={email.length > 3}
-                compact={false}
+                showProgress={!isKeyboardOpen && email.length > 3}
+                compact={isKeyboardOpen}
+                className={isKeyboardOpen ? 'p-2' : undefined}
               />
             )}
           </AnimatePresence>
