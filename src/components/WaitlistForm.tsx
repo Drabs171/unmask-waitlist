@@ -399,7 +399,7 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({
         transition={{ delay: 0.3 }}
       >
         {/* Email Input */}
-        <div className="space-y-2" style={{ paddingBottom: isKeyboardOpen ? 8 : 0 }}>
+        <div className="space-y-2" style={{ paddingBottom: isKeyboardOpen ? 12 : 0 }}>
           <MobileInput
             type="email"
             value={email}
@@ -421,6 +421,7 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({
             error={validationError ?? undefined}
             success={validationState === 'valid'}
             className="w-full"
+            showInlineErrorText={!isKeyboardOpen}
           />
           
           {/* Real-time Validation Feedback */}

@@ -21,6 +21,7 @@ interface MobileInputProps extends Omit<React.InputHTMLAttributes<HTMLInputEleme
   touchOptimized?: boolean;
   smartKeyboard?: boolean;
   hapticFeedback?: boolean;
+  showInlineErrorText?: boolean;
 }
 
 const MobileInput: React.FC<MobileInputProps> = ({
@@ -39,6 +40,7 @@ const MobileInput: React.FC<MobileInputProps> = ({
   touchOptimized = true,
   smartKeyboard = true,
   hapticFeedback = true,
+  showInlineErrorText = true,
   className,
   value,
   onChange,
@@ -385,7 +387,7 @@ const MobileInput: React.FC<MobileInputProps> = ({
       <div className="flex justify-between items-center mt-2 min-h-[1.25rem]">
         <div className="flex-1">
           <AnimatePresence mode="wait">
-            {hasError && (
+            {hasError && showInlineErrorText && (
               <motion.p
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
