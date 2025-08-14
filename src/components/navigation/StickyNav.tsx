@@ -50,12 +50,25 @@ export const StickyNav: React.FC<StickyNavProps> = ({
   const ticking = useRef(false);
   const sectionsRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Throttled scroll handler
+  // Throttled scroll handler with mobile optimization
   const handleScroll = useCallback(() => {
     if (!ticking.current) {
       requestAnimationFrame(() => {
         const currentScrollY = window.pageYOffset;
         const direction = currentScrollY > lastScrollYRef.current ? 'down' : 'up';
+        const isScrolling = Math.abs(currentScrollY - lastScrollYRef.current) > 5;
+        
+        // Add scrolling class to body on mobile to disable expensive effects
+        if (typeof window !== 'undefined' && window.innerWidth <= 768) {
+          if (isScrolling) {
+            document.body.classList.add('scrolling');
+          } else {
+            // Remove scrolling class after scroll ends
+            setTimeout(() => {
+              document.body.classList.remove('scrolling');
+            }, 150);
+          }
+        }
         
         setScrollY(currentScrollY);
         setScrollDirection(direction);

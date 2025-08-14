@@ -30,9 +30,6 @@
 @layer base {
   * {
     border-color: rgba(255, 255, 255, 0.1);
-    /* Optimize animations for Chrome performance */
-    backface-visibility: hidden;
-    transform-style: preserve-3d;
   }
   
   html {
@@ -45,13 +42,10 @@
   
   /* Performance optimizations for animations */
   body {
-    /* Enable hardware acceleration */
-    /* transform: translateZ(0); */
     /* Improve font rendering during animations */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    /* Force compositor layer */
-    will-change: transform;
+    /* Prevent overscroll bounce on mobile */
     overscroll-behavior-y: contain;
   }
   
@@ -73,21 +67,24 @@
   
   /* Chrome-specific animation optimizations */
   @supports (-webkit-appearance: none) {
-    /* Removed forcing 3D transforms on all elements to avoid iOS focus/scroll bugs.
-       Keep GPU acceleration only on animated elements. */
-    
-    /* Optimize elements that will animate */
-    [data-framer-name],
-    .motion-div,
+    /* Only apply GPU acceleration to actively animating elements */
     .animate-pulse,
     .animate-spin,
     .animate-ping,
-    .animate-bounce {
-      /* Force GPU acceleration */
+    .animate-bounce,
+    .floating-heart,
+    .logo-breathe {
+      /* Force GPU acceleration only during animation */
       transform: translate3d(0, 0, 0);
       will-change: transform, opacity;
       /* Improve rendering performance */
       contain: layout style paint;
+    }
+    
+    /* Remove will-change after animations complete */
+    .animate-pulse:not(:hover),
+    .animate-spin:not(:hover) {
+      will-change: auto;
     }
   }
   
@@ -101,9 +98,6 @@
     text-rendering: optimizeLegibility;
     -webkit-text-size-adjust: 100%;
     padding-bottom: env(safe-area-inset-bottom);
-    /* Avoid background blur effects while keyboard open on mobile */
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
   }
 
   /* Prevent iOS zoom on input focus by ensuring minimum font-size */
@@ -515,6 +509,46 @@
   ::-moz-selection {
     background: rgba(255, 107, 157, 0.3);
     color: white;
+  }
+  
+  /* Mobile performance optimizations */
+  @media (max-width: 768px) {
+    .glassmorphism {
+      backdrop-filter: blur(4px) !important;
+      background: rgba(255, 255, 255, 0.08) !important;
+    }
+    
+    .btn-ghost {
+      backdrop-filter: blur(2px) !important;
+    }
+    
+    /* Disable expensive effects during scroll on mobile */
+    body.scrolling .glassmorphism {
+      backdrop-filter: none !important;
+      background: rgba(255, 255, 255, 0.1) !important;
+    }
+    
+    /* Optimize scroll performance - reset will-change but preserve necessary transforms */
+    body.scrolling * {
+      will-change: auto !important;
+    }
+    
+    /* Preserve essential transforms but reduce complexity */
+    body.scrolling .motion-div {
+      will-change: transform !important;
+    }
+    
+    /* Improve scroll containment */
+    main, section {
+      contain: layout style;
+    }
+    
+    /* Reduce repainting during scroll */
+    body.scrolling .animate-pulse,
+    body.scrolling .animate-spin,
+    body.scrolling .floating-heart {
+      animation-play-state: paused !important;
+    }
   }
 }
 
