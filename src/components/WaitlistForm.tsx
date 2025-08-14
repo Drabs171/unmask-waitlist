@@ -37,6 +37,8 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({
   const [currentStep, setCurrentStep] = useState(0);
   const [showFeedback, setShowFeedback] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [cooldownUntil, setCooldownUntil] = useState<number | null>(null);
+  const [cooldownLeft, setCooldownLeft] = useState<number>(0);
   const shouldReduceMotion = useReducedMotion();
   const { isMobile, isTablet } = useMobileDetection();
   const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
@@ -85,6 +87,28 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({
       vv.removeEventListener('scroll', handleResize);
     };
   }, []);
+
+  // Cooldown countdown updater
+  useEffect(() => {
+    if (!cooldownUntil) return;
+    const tick = () => {
+      const secondsLeft = Math.max(0, Math.ceil((cooldownUntil - Date.now()) / 1000));
+      setCooldownLeft(secondsLeft);
+      if (secondsLeft <= 0) {
+        setCooldownUntil(null);
+        setSubmitError(null);
+      }
+    };
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, [cooldownUntil]);
+
+  const formatTime = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return minutes > 0 ? `${minutes}m ${secs}s` : `${secs}s`;
+  };
 
   // Handle email input changes
   const handleEmailChange = (value: string) => {
@@ -150,15 +174,24 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({
           }),
         });
 
-        const data = await response.json();
+        let parsed: any = null;
+        try { parsed = await response.json(); } catch {}
 
         if (!response.ok) {
-          throw new Error(data.message || data.error || 'Failed to join waitlist');
+          if (response.status === 429) {
+            const resetHeader = response.headers.get('X-RateLimit-Reset');
+            const resetMs = resetHeader ? parseInt(resetHeader, 10) * 1000 : Date.now() + 5 * 60 * 1000;
+            setCooldownUntil(resetMs);
+            const secondsLeft = Math.max(0, Math.ceil((resetMs - Date.now()) / 1000));
+            const msg = `You\'re trying too often. Please wait ${formatTime(secondsLeft)} and try again.`;
+            throw new Error(msg);
+          }
+          throw new Error(parsed?.message || parsed?.error || 'Failed to join waitlist');
         }
 
         // Check if email suggestions were provided
-        if (data.suggestions && data.suggestions.length > 0) {
-          console.log('Email suggestions provided:', data.suggestions);
+        if (parsed?.suggestions && parsed.suggestions.length > 0) {
+          console.log('Email suggestions provided:', parsed.suggestions);
           // You could show suggestions to the user here
         }
       }
@@ -444,7 +477,7 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({
           variant="gradient"
           size={isMobile ? "xl" : "lg"}
           loading={isSubmitting}
-          disabled={!isValidEmail || isSubmitting}
+          disabled={!isValidEmail || isSubmitting || !!cooldownUntil}
           fullWidth
           touchOptimized={isMobile || isTablet}
           hapticFeedback={true}
