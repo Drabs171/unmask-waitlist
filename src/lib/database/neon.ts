@@ -57,8 +57,10 @@ export async function updateVerificationToken(id: string, token: string) {
 export interface InsertEmailInput {
   email: string;
   email_hash: string;
-  verification_token: string;
+  verification_token?: string | null;
   unsubscribe_token: string;
+  verified?: boolean;
+  verified_at?: Date | null;
   source?: string | null;
   referrer?: string | null;
   user_agent?: string | null;
@@ -75,12 +77,12 @@ export interface InsertEmailInput {
 export async function insertEmail(input: InsertEmailInput) {
   const rows = await sql<{ id: string }[]>`
     INSERT INTO waitlist_emails (
-      email, email_hash, verification_token, verification_sent_at, unsubscribe_token,
+      email, email_hash, verification_token, verified, verified_at, unsubscribe_token,
       source, referrer, user_agent, ip_address,
       utm_source, utm_medium, utm_campaign, utm_term, utm_content,
       ab_test_variant, metadata
     ) VALUES (
-      ${input.email}, ${input.email_hash}, ${input.verification_token}, NOW(), ${input.unsubscribe_token},
+      ${input.email}, ${input.email_hash}, ${input.verification_token ?? null}, ${input.verified ?? false}, ${input.verified_at ?? null}, ${input.unsubscribe_token},
       ${input.source ?? null}, ${input.referrer ?? null}, ${input.user_agent ?? null}, ${input.ip_address ?? null},
       ${input.utm_source ?? null}, ${input.utm_medium ?? null}, ${input.utm_campaign ?? null}, ${input.utm_term ?? null}, ${input.utm_content ?? null},
       ${input.ab_test_variant ?? null}, ${input.metadata ?? {}}

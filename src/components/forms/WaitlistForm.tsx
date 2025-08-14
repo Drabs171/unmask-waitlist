@@ -74,7 +74,7 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ className }) => {
           <div className="flex items-center justify-center gap-2 mb-4">
             <Sparkles className="w-4 h-4 text-accent animate-pulse" />
             <span className="text-sm text-accent font-medium">
-              Position #{Math.floor(Math.random() * 100) + 2800} in line
+              Position #{typeof window !== 'undefined' ? localStorage.getItem('unmask_waitlist_count') || '2847' : '2847'} in line
             </span>
           </div>
 

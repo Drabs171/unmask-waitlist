@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { 
   getEmailByHash,
-  updateVerificationToken,
   insertEmail,
   getVerifiedCount,
 } from '@/lib/database/neon';
 import { waitlistSubmissionSchema } from '@/lib/security/validation';
 import { validateEmailAdvanced, detectBot, validateHoneypot } from '@/lib/security/validation';
-import { encryptData, hashEmail, generateVerificationToken, generateSecureToken } from '@/lib/security/encryption';
+import { encryptData, hashEmail, generateSecureToken } from '@/lib/security/encryption';
 import { checkEmailSubmissionRateLimit, createRateLimitHeaders } from '@/lib/security/rate-limiting';
 import { sanitizeForLogs } from '@/lib/security/encryption';
 import { getEmailService } from '@/lib/email/service';
@@ -125,59 +124,28 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      if (existingEmail.verified) {
-        return NextResponse.json(
-          {
-            success: false,
-            error: 'Email already verified',
-            message: 'This email is already verified and on the waitlist.',
-          },
-          { status: 409, headers: rateLimitHeaders }
-        );
-      }
-
-      // Email exists but not verified - resend verification
-      const verificationToken = generateVerificationToken();
-      
-      await updateVerificationToken(existingEmail.id, verificationToken);
-
-      // Send verification email
-      const emailService = getEmailService();
-      // Always use the public site URL for email links to avoid preview/SSO domains
-      const publicUrl = process.env.NEXT_PUBLIC_URL || 'https://www.unmask.life';
-      const emailResult = await emailService.sendVerificationEmail(submission.email, verificationToken, publicUrl);
-      const debugEmail = true;
-      
-      if (!emailResult.success) {
-        console.error('Failed to send verification email:', emailResult.error);
-        // Don't fail the request, just log the error
-      }
-
+      // Email already exists on waitlist
       return NextResponse.json(
         {
-          success: true,
-          message: 'Verification email sent! Please check your inbox.',
-          data: {
-            id: existingEmail.id,
-            email: submission.email,
-            verification_required: true,
-          },
-          ...(debugEmail ? { email_debug: emailResult } : {}),
+          success: false,
+          error: 'Email already on waitlist',
+          message: 'This email is already on the waitlist.',
         },
-        { headers: rateLimitHeaders }
+        { status: 409, headers: rateLimitHeaders }
       );
     }
 
     // Create new waitlist entry
-    const verificationToken = generateVerificationToken();
     const unsubscribeToken = generateSecureToken();
     const encryptedEmail = encryptData(submission.email);
 
     const newEmail = await insertEmail({
       email: encryptedEmail,
       email_hash: emailHash,
-      verification_token: verificationToken,
+      verification_token: null,
       unsubscribe_token: unsubscribeToken,
+      verified: true,
+      verified_at: new Date(),
       source: submission.source || 'direct',
       referrer: submission.referrer || null,
       user_agent: userAgent,
@@ -191,15 +159,17 @@ export async function POST(request: NextRequest) {
       metadata: submission.metadata || {},
     });
 
-    // Send verification email
+    // Send welcome email directly
     const emailService = getEmailService();
-    // Always use the public site URL for email links to avoid preview/SSO domains
-    const publicUrl = process.env.NEXT_PUBLIC_URL || 'https://www.unmask.life';
-    const emailResult = await emailService.sendVerificationEmail(submission.email, verificationToken, publicUrl);
-    const debugEmail = true;
+    const waitlistPosition = await getVerifiedCount();
+    const welcomeEmailResult = await emailService.sendWelcomeEmail(
+      submission.email, 
+      unsubscribeToken,
+      (waitlistPosition || 0) + 1
+    );
     
-    if (!emailResult.success) {
-      console.error('Failed to send verification email:', emailResult.error);
+    if (!welcomeEmailResult.success) {
+      console.error('Failed to send welcome email:', welcomeEmailResult.error);
       // Don't fail the request, just log the error
     }
 
@@ -213,13 +183,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: true,
-        message: 'Thanks for joining! Please check your email to verify your subscription.',
+        message: 'Welcome to the Unmask waitlist! You\'re all set.',
         data: {
           id: newEmail.id,
           email: submission.email,
-          verification_required: true,
+          verification_required: false,
+          waitlist_position: (waitlistPosition || 0) + 1,
         },
-        ...(debugEmail ? { email_debug: emailResult } : {}),
       },
       { 
         status: 201,

@@ -28,25 +28,38 @@ export const useWaitlist = () => {
         timestamp: new Date(),
       };
 
-      // Simulate API call for now - replace with actual API endpoint
-      const response = await mockApiCall(cleanData);
+      // Make actual API call to waitlist endpoint
+      const response = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: cleanData.email,
+          name: cleanData.name,
+          source: 'waitlist_form',
+          referrer: typeof window !== 'undefined' ? document.referrer : null,
+        }),
+      });
 
-      if (response.success) {
+      const result = await response.json();
+
+      if (result.success) {
         setSuccess(true);
         
         // Store locally for analytics
         if (typeof window !== 'undefined') {
-          const existingCount = localStorage.getItem('unmask_waitlist_count');
-          const currentCount = existingCount ? parseInt(existingCount) : 2847;
-          localStorage.setItem('unmask_waitlist_count', (currentCount + 1).toString());
+          // Store the actual waitlist position if provided
+          const waitlistPosition = result.data?.waitlist_position || 2847;
+          localStorage.setItem('unmask_waitlist_count', waitlistPosition.toString());
           
           // Store user data (optional, for analytics)
           localStorage.setItem('unmask_user_joined', 'true');
         }
 
-        return response;
+        return result;
       } else {
-        throw new Error(response.error || 'Failed to join waitlist');
+        throw new Error(result.error || result.message || 'Failed to join waitlist');
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred';
@@ -74,23 +87,3 @@ export const useWaitlist = () => {
   };
 };
 
-// Mock API call - replace with actual API integration
-const mockApiCall = async (data: unknown): Promise<ApiResponseInterface> => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      // Simulate 95% success rate
-      if (Math.random() > 0.05) {
-        resolve({
-          success: true,
-          data: { id: Math.random().toString(36), ...(data as Record<string, unknown>) },
-          message: 'Successfully joined the waitlist!',
-        });
-      } else {
-        resolve({
-          success: false,
-          error: 'Server error. Please try again.',
-        });
-      }
-    }, 1500); // Simulate network delay
-  });
-};
